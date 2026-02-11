@@ -2,10 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import NProgress from "nprogress";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import NProgress from "nprogress";
 
 import { Form } from "@/components/ui/form";
 import { createUser } from "@/lib/actions/patient.actions";

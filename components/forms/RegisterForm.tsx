@@ -3,10 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import NProgress from "nprogress";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import NProgress from "nprogress";
 
 import { Form, FormControl } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
