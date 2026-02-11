@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import NProgress from "nprogress";
 
 import {
   AlertDialog,
@@ -38,6 +39,7 @@ export const PasskeyModal = () => {
     if (path)
       if (accessKey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY!.toString()) {
         setOpen(false);
+        NProgress.start();
         router.push("/admin");
       } else {
         setOpen(true);
@@ -46,6 +48,7 @@ export const PasskeyModal = () => {
 
   const closeModal = () => {
     setOpen(false);
+    NProgress.start();
     router.push("/");
   };
 

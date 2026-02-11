@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import NProgress from "nprogress";
 
 import { SelectItem } from "@/components/ui/select";
 import { Doctors } from "@/constants";
@@ -86,6 +87,7 @@ export const AppointmentForm = ({
 
         if (newAppointment) {
           form.reset();
+          NProgress.start();
           router.push(
             `/patients/${userId}/new-appointment/success?appointmentId=${newAppointment.$id}`
           );

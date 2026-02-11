@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./nprogress.css";
 import { Plus_Jakarta_Sans as FontSans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 
 import { cn } from "@/lib/utils";
+import NavigationProgress from "@/components/NavigationProgress";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -34,6 +36,7 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
+          <NavigationProgress />
           {children}
         </ThemeProvider>
       </body>

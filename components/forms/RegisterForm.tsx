@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import NProgress from "nprogress";
 
 import { Form, FormControl } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
@@ -88,6 +89,7 @@ const RegisterForm = ({ user }: { user: User }) => {
       const newPatient = await registerPatient(patient);
 
       if (newPatient) {
+        NProgress.start();
         router.push(`/patients/${user.$id}/new-appointment`);
       }
     } catch (error) {
