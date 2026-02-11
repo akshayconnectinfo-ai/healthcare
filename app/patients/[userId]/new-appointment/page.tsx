@@ -3,6 +3,8 @@ import Image from "next/image";
 import { AppointmentForm } from "@/components/forms/AppointmentForm";
 import { getPatient } from "@/lib/actions/patient.actions";
 
+export const dynamic = 'force-dynamic';
+
 const Appointment = async ({ params: { userId } }: SearchParamProps) => {
   const patient = await getPatient(userId);
 

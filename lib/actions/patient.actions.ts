@@ -51,6 +51,7 @@ export const getUser = async (userId: string) => {
       "An error occurred while retrieving the user details:",
       error
     );
+    return null;
   }
 };
 
@@ -108,5 +109,6 @@ export const getPatient = async (userId: string) => {
       "An error occurred while retrieving the patient details:",
       error
     );
+    return null;
   }
 };

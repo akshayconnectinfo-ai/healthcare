@@ -6,12 +6,24 @@ import { Doctors } from "@/constants";
 import { getAppointment } from "@/lib/actions/appointment.actions";
 import { formatDateTime } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 const RequestSuccess = async ({
   searchParams,
   params: { userId },
 }: SearchParamProps) => {
   const appointmentId = (searchParams?.appointmentId as string) || "";
   const appointment = await getAppointment(appointmentId);
+
+  if (!appointment) {
+    return (
+      <div className="flex h-screen max-h-screen px-[5%]">
+        <div className="success-img">
+          <p>Appointment not found</p>
+        </div>
+      </div>
+    );
+  }
 
   const doctor = Doctors.find(
     (doctor) => doctor.name === appointment.primaryPhysician

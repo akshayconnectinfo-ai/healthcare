@@ -167,5 +167,6 @@ export const getAppointment = async (appointmentId: string) => {
       "An error occurred while retrieving the existing patient:",
       error
     );
+    return null;
   }
 };
