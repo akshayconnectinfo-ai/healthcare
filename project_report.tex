@@ -1,0 +1,1361 @@
+% Healthcare Patient Management System - Project Report
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{tabularx}
+
+% Page setup
+\geometry{a4paper, margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Healthcare Management System}
+\lhead{Project Report}
+\rfoot{Page \thepage}
+
+% Code listing style
+\definecolor{codebg}{RGB}{40,44,52}
+\definecolor{codegreen}{RGB}{80,200,120}
+\definecolor{codepurple}{RGB}{198,120,221}
+\definecolor{codeorange}{RGB}{209,154,102}
+\definecolor{codegray}{RGB}{150,150,150}
+\definecolor{codeblue}{RGB}{97,175,239}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize\color{white},
+    commentstyle=\color{codegray},
+    keywordstyle=\color{codepurple},
+    stringstyle=\color{codegreen},
+    numberstyle=\tiny\color{codegray},
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numbersep=5pt,
+    tabsize=2,
+    showstringspaces=false,
+    rulecolor=\color{codegray},
+}
+\lstset{style=mystyle}
+
+% Title formatting
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+% Document information
+\title{\textbf{Healthcare Patient Management System\\Project Report}}
+\author{Name:\\Student ID: \\Course: Software Engineering}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ==================== PART A: REQUIREMENT ANALYSIS ====================
+\section{Requirement Analysis}
+
+\subsection{Feasibility Study}
+
+The Healthcare Patient Management System was evaluated across multiple feasibility dimensions to ensure project viability:
+
+\subsubsection{Technical Feasibility}
+The system is technically feasible using modern web technologies:
+\begin{itemize}
+    \item \textbf{Frontend Framework}: Next.js 14 with React provides server-side rendering, excellent performance, and SEO optimization capabilities
+    \item \textbf{Backend Service}: Appwrite offers comprehensive BaaS (Backend-as-a-Service) with authentication, database, and storage
+    \item \textbf{Programming Language}: TypeScript ensures type safety and reduces runtime errors
+    \item \textbf{UI Framework}: TailwindCSS with ShadCN components enables rapid, responsive UI development
+    \item \textbf{Communication}: Twilio API integration for reliable SMS notifications
+    \item \textbf{Monitoring}: Sentry for real-time error tracking and performance monitoring
+\end{itemize}
+
+\subsubsection{Economic Feasibility}
+The project demonstrates strong economic viability:
+\begin{itemize}
+    \item Low development cost due to open-source technologies
+    \item Appwrite provides free tier suitable for initial deployment
+    \item Twilio offers pay-as-you-go SMS pricing
+    \item Minimal infrastructure costs with cloud deployment (Vercel/Netlify)
+    \item Reduces administrative overhead in healthcare facilities by 40--60\%
+    \item Decreases appointment no-show rates through automated SMS reminders
+\end{itemize}
+
+\subsubsection{Operational Feasibility}
+The system improves current operational processes:
+\begin{itemize}
+    \item Streamlines patient registration workflow
+    \item Automates appointment scheduling and management
+    \item Provides centralized admin dashboard for healthcare staff
+    \item Reduces phone call volume for appointment bookings
+    \item Enables 24/7 appointment booking availability
+    \item User-friendly interface requires minimal training
+\end{itemize}
+
+\subsection{Users of the System}
+
+The Healthcare Patient Management System serves three primary user categories:
+
+\subsubsection{Patients (End Users)}
+\textbf{Role and Responsibilities:}
+\begin{itemize}
+    \item Register personal profile with medical information
+    \item Book appointments with preferred physicians
+    \item Manage multiple appointments
+    \item Upload identification documents
+    \item Provide medical history and insurance details
+    \item Receive SMS notifications for appointment confirmations
+\end{itemize}
+
+\textbf{Access Level:} Limited access to personal data and appointment booking functionality
+
+\subsubsection{Healthcare Administrators}
+\textbf{Role and Responsibilities:}
+\begin{itemize}
+    \item Access admin dashboard using secure passkey (OTP-based)
+    \item View all scheduled, pending, and cancelled appointments
+    \item Confirm and schedule pending appointments
+    \item Cancel appointments with reason documentation
+    \item Update appointment status and details
+    \item Monitor appointment statistics and metrics
+\end{itemize}
+
+\textbf{Access Level:} Full administrative access with passkey authentication
+
+\subsubsection{System Administrators}
+\textbf{Role and Responsibilities:}
+\begin{itemize}
+    \item Manage Appwrite database and storage
+    \item Configure Twilio SMS gateway
+    \item Monitor system performance via Sentry
+    \item Manage user permissions and security
+    \item Perform database backups and maintenance
+    \item Handle system updates and deployments
+\end{itemize}
+
+\textbf{Access Level:} Complete system access including backend configuration
+
+\subsection{System Modules}
+
+The application is architected with the following core modules:
+
+\subsubsection{Patient Management Module}
+\textbf{Purpose:} Handle patient registration and profile management
+
+\textbf{Components:}
+\begin{itemize}
+    \item \texttt{PatientForm.tsx}: Initial user registration (name, email, phone)
+    \item \texttt{RegisterForm.tsx}: Comprehensive patient profile creation
+    \item \texttt{patient.actions.ts}: Server actions for CRUD operations
+    \item \texttt{FileUploader.tsx}: Document upload component
+\end{itemize}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item Form validation using Zod schema
+    \item Medical history collection
+    \item Insurance information management
+    \item Emergency contact details
+    \item Identification document upload to Appwrite Storage
+    \item Privacy consent management
+\end{itemize}
+
+\subsubsection{Appointment Management Module}
+\textbf{Purpose:} Facilitate appointment booking and scheduling
+
+\textbf{Components:}
+\begin{itemize}
+    \item \texttt{AppointmentForm.tsx}: Appointment creation and modification
+    \item \texttt{appointment.actions.ts}: Appointment CRUD operations
+    \item \texttt{AppointmentModal.tsx}: Admin appointment management interface
+\end{itemize}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item Doctor selection from predefined list
+    \item Date and time scheduling with React DatePicker
+    \item Appointment reason documentation
+    \item Multiple appointment support per patient
+    \item Status tracking (pending, scheduled, cancelled)
+    \item SMS notification trigger on confirmation
+\end{itemize}
+
+\subsubsection{Admin Dashboard Module}
+\textbf{Purpose:} Provide administrative oversight and management
+
+\textbf{Components:}
+\begin{itemize}
+    \item \texttt{admin/page.tsx}: Main admin interface
+    \item \texttt{DataTable.tsx}: Appointment listing with sorting/filtering
+    \item \texttt{StatCard.tsx}: Statistics visualization
+    \item \texttt{columns.tsx}: Table column definitions
+\end{itemize}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item Real-time appointment statistics
+    \item Status-based appointment filtering
+    \item Appointment confirmation workflow
+    \item Cancellation with reason tracking
+    \item Responsive data table with actions
+\end{itemize}
+
+\subsubsection{Authentication \& Security Module}
+\textbf{Purpose:} Ensure secure access control
+
+\textbf{Components:}
+\begin{itemize}
+    \item \texttt{PasskeyModal.tsx}: Admin passkey verification
+    \item \texttt{appwrite.config.ts}: Appwrite client configuration
+    \item \texttt{utils.ts}: Encryption utilities
+\end{itemize}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item OTP-based admin authentication
+    \item Passkey encryption using btoa/atob
+    \item LocalStorage-based session management
+    \item Environment variable protection for sensitive data
+\end{itemize}
+
+\subsubsection{Notification Module}
+\textbf{Purpose:} Send automated SMS notifications
+
+\textbf{Integration:} Twilio messaging API
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item Automated SMS on appointment confirmation
+    \item Appointment details in notification
+    \item Error handling for failed deliveries
+\end{itemize}
+
+\subsection{Process Model}
+
+\textbf{Selected Model:} Agile Incremental Development Model
+
+\textbf{Justification:}
+\begin{itemize}
+    \item Healthcare requirements evolve with user feedback
+    \item Allows iterative feature deployment
+    \item Enables continuous testing and quality assurance
+    \item Facilitates quick response to regulatory changes
+    \item Supports modular development approach
+    \item Reduces risk through phased implementation
+\end{itemize}
+
+\textbf{Development Phases:}
+\begin{enumerate}
+    \item \textbf{Sprint 1:} Patient registration and basic authentication
+    \item \textbf{Sprint 2:} Appointment booking functionality
+    \item \textbf{Sprint 3:} Admin dashboard and appointment management
+    \item \textbf{Sprint 4:} SMS notification integration
+    \item \textbf{Sprint 5:} File upload and storage implementation
+    \item \textbf{Sprint 6:} UI/UX refinement and responsiveness
+    \item \textbf{Sprint 7:} Testing, bug fixes, and performance optimization
+    \item \textbf{Sprint 8:} Deployment and monitoring setup
+\end{enumerate}
+
+\subsection{Hardware and Software Requirements}
+
+\subsubsection{Hardware Requirements}
+
+\textbf{Development Environment:}
+\begin{itemize}
+    \item \textbf{Processor:} Intel Core i5 or equivalent (minimum), i7 recommended
+    \item \textbf{RAM:} 8GB minimum, 16GB recommended for optimal development
+    \item \textbf{Storage:} 256GB SSD minimum for fast build times
+    \item \textbf{Network:} Stable internet connection for API calls
+\end{itemize}
+
+\textbf{Production Server (Cloud Deployment):}
+\begin{itemize}
+    \item \textbf{Platform:} Vercel/Netlify serverless infrastructure
+    \item \textbf{CDN:} Global content delivery network
+    \item \textbf{Database:} Appwrite Cloud hosting
+\end{itemize}
+
+\textbf{Client Requirements:}
+\begin{itemize}
+    \item Any modern device (desktop, tablet, mobile)
+    \item Minimum 2GB RAM
+    \item Modern web browser (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
+    \item Internet connection (minimum 2 Mbps)
+\end{itemize}
+
+\subsubsection{Software Requirements}
+
+\textbf{Development Tools:}
+\begin{table}[H]
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Software} & \textbf{Version} & \textbf{Purpose} \\
+\hline
+Node.js & 18.x or higher & JavaScript runtime environment \\
+npm & 9.x or higher & Package manager \\
+Git & 2.x & Version control system \\
+VS Code & Latest & Code editor (recommended) \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Core Technologies:}
+\begin{table}[H]
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Technology} & \textbf{Version} & \textbf{Purpose} \\
+\hline
+Next.js & 14.x & React framework with SSR \\
+React & 18.x & Frontend library \\
+TypeScript & 5.x & Type-safe JavaScript \\
+TailwindCSS & 3.x & Utility-first CSS framework \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Backend Services:}
+\begin{table}[H]
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Service} & \textbf{Purpose} \\
+\hline
+Appwrite & Authentication, Database, Storage \\
+Twilio & SMS notification service \\
+Sentry & Error tracking and monitoring \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Key Libraries:}
+\begin{itemize}
+    \item \texttt{react-hook-form}: Form state management
+    \item \texttt{zod}: Schema validation
+    \item \texttt{shadcn/ui}: Reusable UI components
+    \item \texttt{react-datepicker}: Date/time selection
+    \item \texttt{react-phone-number-input}: Phone input formatting
+    \item \texttt{nprogress}: Page transition loading indicators
+\end{itemize}
+
+\subsection{Use Cases and Use Case Diagram}
+
+\subsubsection{Primary Use Cases}
+
+\textbf{UC-01: Patient Registration}
+\begin{itemize}
+    \item \textbf{Actor:} Patient
+    \item \textbf{Precondition:} None
+    \item \textbf{Main Flow:}
+    \begin{enumerate}
+        \item Patient accesses landing page
+        \item System displays patient form
+        \item Patient enters name, email, phone number
+        \item System validates input
+        \item System creates user in Appwrite
+        \item System redirects to detailed registration
+    \end{enumerate}
+    \item \textbf{Postcondition:} User account created
+\end{itemize}
+
+\textbf{UC-02: Complete Patient Profile}
+\begin{itemize}
+    \item \textbf{Actor:} Patient
+    \item \textbf{Precondition:} Basic registration completed (UC-01)
+    \item \textbf{Main Flow:}
+    \begin{enumerate}
+        \item System displays comprehensive registration form
+        \item Patient enters medical information
+        \item Patient selects primary physician
+        \item Patient uploads identification document
+        \item Patient provides insurance details
+        \item Patient agrees to consent forms
+        \item System validates and stores data
+        \item System redirects to appointment booking
+    \end{enumerate}
+    \item \textbf{Postcondition:} Complete patient profile created
+\end{itemize}
+
+\textbf{UC-03: Book Appointment}
+\begin{itemize}
+    \item \textbf{Actor:} Patient
+    \item \textbf{Precondition:} Patient profile exists
+    \item \textbf{Main Flow:}
+    \begin{enumerate}
+        \item System displays appointment form
+        \item Patient selects doctor
+        \item Patient chooses date and time
+        \item Patient enters appointment reason
+        \item Patient adds optional notes
+        \item System creates appointment with ``pending'' status
+        \item System displays success message
+    \end{enumerate}
+    \item \textbf{Postcondition:} Appointment created in pending state
+\end{itemize}
+
+\textbf{UC-04: Admin Login}
+\begin{itemize}
+    \item \textbf{Actor:} Healthcare Administrator
+    \item \textbf{Precondition:} Admin passkey is set
+    \item \textbf{Main Flow:}
+    \begin{enumerate}
+        \item Admin clicks ``Admin'' link
+        \item System displays passkey modal
+        \item Admin enters 6-digit passkey
+        \item System validates passkey
+        \item System encrypts and stores in localStorage
+        \item System redirects to admin dashboard
+    \end{enumerate}
+    \item \textbf{Postcondition:} Admin authenticated and logged in
+\end{itemize}
+
+\textbf{UC-05: Manage Appointments}
+\begin{itemize}
+    \item \textbf{Actor:} Healthcare Administrator
+    \item \textbf{Precondition:} Admin is authenticated
+    \item \textbf{Main Flow:}
+    \begin{enumerate}
+        \item System displays appointment dashboard
+        \item System shows statistics (scheduled, pending, cancelled)
+        \item Admin views appointment list in data table
+        \item Admin can filter/sort appointments
+        \item Admin selects appointment to manage
+        \item Admin can schedule or cancel appointment
+    \end{enumerate}
+    \item \textbf{Postcondition:} Appointment status updated
+\end{itemize}
+
+\textbf{UC-06: Confirm Appointment}
+\begin{itemize}
+    \item \textbf{Actor:} Healthcare Administrator
+    \item \textbf{Precondition:} Appointment exists in pending state
+    \item \textbf{Main Flow:}
+    \begin{enumerate}
+        \item Admin opens appointment modal
+        \item Admin reviews appointment details
+        \item Admin confirms schedule or modifies time
+        \item System updates appointment status to ``scheduled''
+        \item System triggers SMS notification via Twilio
+        \item Patient receives confirmation SMS
+    \end{enumerate}
+    \item \textbf{Postcondition:} Appointment confirmed, SMS sent
+\end{itemize}
+
+\textbf{UC-07: Cancel Appointment}
+\begin{itemize}
+    \item \textbf{Actor:} Healthcare Administrator
+    \item \textbf{Precondition:} Appointment exists
+    \item \textbf{Main Flow:}
+    \begin{enumerate}
+        \item Admin opens appointment modal
+        \item Admin selects cancel option
+        \item Admin enters cancellation reason
+        \item System validates reason (minimum 2 characters)
+        \item System updates appointment status to ``cancelled''
+        \item System stores cancellation reason
+    \end{enumerate}
+    \item \textbf{Postcondition:} Appointment cancelled with reason
+\end{itemize}
+
+\subsubsection{Use Case Diagram Description}
+
+The use case diagram illustrates the interactions between three actors and the Healthcare Management System:
+
+\textbf{Actors:}
+\begin{itemize}
+    \item Patient (primary user)
+    \item Healthcare Administrator
+    \item Appwrite System (external service)
+    \item Twilio SMS Service (external service)
+\end{itemize}
+
+\textbf{Key Relationships:}
+\begin{itemize}
+    \item \texttt{<<include>>}: ``Book Appointment'' includes ``Authenticate Patient''
+    \item \texttt{<<extend>>}: ``Upload Document'' extends ``Complete Profile''
+    \item \texttt{<<extend>>}: ``Send SMS'' extends ``Confirm Appointment''
+\end{itemize}
+
+\textit{Note: Create the actual use case diagram using tools like draw.io, Lucidchart, or PlantUML and insert as figure.}
+
+% ==================== PART B: DESIGN ====================
+\newpage
+\section{Design}
+
+\subsection{Use Case Scenarios}
+
+\subsubsection{Scenario 1: New Patient Registration and Appointment Booking}
+
+\textbf{Scenario Name:} First-time patient registers and books appointment
+
+\textbf{Actors:} New Patient, System, Admin, Twilio
+
+\textbf{Description:} Sarah is experiencing persistent headaches and wants to book an appointment with Dr.\ John Green.
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Sarah visits the healthcare management system homepage
+    \item She fills in the initial form (Name: ``Sarah Johnson'', Email: ``sarah.j@email.com'', Phone: ``+1234567890'')
+    \item System creates user account and redirects to detailed registration
+    \item Sarah completes comprehensive profile:
+    \begin{itemize}
+        \item Birth date: Jan 15, 1990; Gender: Female
+        \item Address: ``123 Main St, New York, NY''
+        \item Occupation: ``Software Engineer''
+        \item Emergency contact: ``John Johnson'', ``+1234567891''
+        \item Primary physician: Dr.\ John Green
+        \item Insurance: ``HealthFirst'', Policy: ``HF-123456''
+        \item Allergies: ``Penicillin''
+        \item Uploads driver's license; Accepts consent forms
+    \end{itemize}
+    \item System validates and stores data in Appwrite database
+    \item System uploads document to Appwrite storage
+    \item Sarah is redirected to appointment booking page
+    \item She selects Doctor: ``Dr.\ John Green'', date: Tomorrow at 2:00 PM
+    \item Reason: ``Persistent headaches for 2 weeks''
+    \item System creates appointment with status ``pending''
+    \item Admin logs into dashboard using passkey ``111111''
+    \item Admin confirms appointment for 2:00 PM
+    \item System updates status to ``scheduled''
+    \item Twilio sends SMS to Sarah: ``Your appointment with Dr.\ John Green is confirmed for [date] at 2:00 PM''
+\end{enumerate}
+
+\textbf{Alternative Flow:} If appointment time is not available, admin can reschedule to different time and system sends updated SMS.
+
+\subsubsection{Scenario 2: Admin Cancels Appointment}
+
+\textbf{Scenario Name:} Emergency causes appointment cancellation
+
+\textbf{Steps:}
+\begin{enumerate}
+    \item Dr.\ John Green has a medical emergency
+    \item Admin accesses dashboard and filters appointments by ``Dr.\ John Green''
+    \item Admin selects Sarah's appointment and clicks ``Cancel'' button
+    \item Admin enters reason: ``Doctor medical emergency -- will reschedule''
+    \item System validates reason and updates appointment status to ``cancelled''
+    \item System stores cancellation reason; Dashboard updates cancelled count
+\end{enumerate}
+
+\subsection{UML / DFD Diagrams}
+
+\subsubsection{Class Diagram}
+
+\textbf{Main Classes:}
+
+\textbf{1.\ User} --- Attributes: \texttt{\$id: string, name: string, email: string, phone: string}; Methods: \texttt{create(), get(), list()}
+
+\textbf{2.\ Patient} (inherits User) --- Additional Attributes: \texttt{userId, birthDate, gender, address, occupation, emergencyContactName, emergencyContactNumber, primaryPhysician, insuranceProvider, insurancePolicyNumber, allergies?, currentMedication?, familyMedicalHistory?, pastMedicalHistory?, identificationType?, identificationNumber?, identificationDocument?, privacyConsent}; Methods: \texttt{registerPatient(), getPatient()}
+
+\textbf{3.\ Appointment} --- Attributes: \texttt{\$id, patient, schedule, status, primaryPhysician, reason, note?, userId, cancellationReason?}; Methods: \texttt{createAppointment(), updateAppointment(), getAppointment(), getRecentAppointmentList()}
+
+\textbf{4.\ Doctor} --- Attributes: \texttt{name, image}; Methods: \texttt{list()}
+
+\textbf{Relationships:}
+\begin{itemize}
+    \item Patient \textbf{extends} User (1:1)
+    \item Appointment \textbf{has} Patient (1:1), \textbf{references} Doctor (many:1)
+    \item Patient \textbf{references} Doctor as primaryPhysician (many:1)
+\end{itemize}
+
+\subsubsection{Sequence Diagram --- Patient Registration Flow}
+
+\textbf{Participants:} Patient (Actor), Browser, Next.js Server, PatientForm Component, patient.actions.ts, Appwrite API, Appwrite Database
+
+\textbf{Sequence:}
+\begin{enumerate}
+    \item Patient $\rightarrow$ Browser: Opens homepage
+    \item Browser $\rightarrow$ Next.js Server: GET /
+    \item Next.js Server $\rightarrow$ Browser: Returns PatientForm page
+    \item Patient $\rightarrow$ Browser: Fills form (name, email, phone)
+    \item Browser $\rightarrow$ PatientForm: Submit event
+    \item PatientForm $\rightarrow$ patient.actions: \texttt{createUser(userData)}
+    \item patient.actions $\rightarrow$ Appwrite API: \texttt{users.create()}
+    \item Appwrite API $\rightarrow$ Appwrite Database: INSERT user
+    \item Appwrite Database $\rightarrow$ Appwrite API: Return user object
+    \item Appwrite API $\rightarrow$ patient.actions: Return newUser
+    \item patient.actions $\rightarrow$ PatientForm: Return user \$id
+    \item PatientForm $\rightarrow$ Next.js Server: \texttt{router.push('/patients/[userId]/register')}
+\end{enumerate}
+
+\subsubsection{Sequence Diagram --- Appointment Confirmation with SMS}
+
+\textbf{Participants:} Admin, Admin Dashboard, AppointmentModal, appointment.actions, Appwrite Database, Twilio API, Patient Phone
+
+\textbf{Sequence:}
+\begin{enumerate}
+    \item Admin $\rightarrow$ Dashboard: Click ``Schedule'' on appointment
+    \item Dashboard $\rightarrow$ AppointmentModal: Open modal with appointment data
+    \item Admin $\rightarrow$ AppointmentModal: Confirm schedule
+    \item AppointmentModal $\rightarrow$ appointment.actions: \texttt{updateAppointment(id, status="scheduled")}
+    \item appointment.actions $\rightarrow$ Appwrite DB: UPDATE appointment SET status=``scheduled''
+    \item appointment.actions $\rightarrow$ Twilio API: \texttt{messaging.create(to, content)}
+    \item Twilio API $\rightarrow$ Patient Phone: Send SMS
+    \item appointment.actions $\rightarrow$ AppointmentModal: Return success
+    \item AppointmentModal $\rightarrow$ Dashboard: Close modal, refresh data
+\end{enumerate}
+
+\subsubsection{Activity Diagram --- Patient Registration Process}
+
+\textbf{Swimlanes:} Patient, System, Appwrite
+
+\textbf{Activities:}
+\begin{enumerate}
+    \item [Patient] Start: Visit website $\rightarrow$ Fill initial form
+    \item [System] Decision: Validate form input (invalid $\rightarrow$ Display errors $\rightarrow$ Return; valid $\rightarrow$ Continue)
+    \item [Appwrite] Create user account
+    \item [System] Redirect to detailed registration
+    \item [Patient] Complete comprehensive form $\rightarrow$ Upload identification document
+    \item [System] Decision: Validate all fields (invalid $\rightarrow$ Display errors; valid $\rightarrow$ Continue)
+    \item [Appwrite] Store patient data $\rightarrow$ Upload file to storage
+    \item [System] Redirect to appointment booking $\rightarrow$ End
+\end{enumerate}
+
+\subsubsection{Activity Diagram --- Admin Appointment Management}
+
+\textbf{Activities:}
+\begin{enumerate}
+    \item Start: Admin opens dashboard
+    \item Decision: Is authenticated? (No $\rightarrow$ Show passkey modal $\rightarrow$ Validate; Yes $\rightarrow$ Continue)
+    \item Load appointments from database; Display statistics; Show data table
+    \item Decision: Admin action? (Schedule $\rightarrow$ Open modal $\rightarrow$ Confirm $\rightarrow$ Update status $\rightarrow$ Send SMS; Cancel $\rightarrow$ Open modal $\rightarrow$ Enter reason $\rightarrow$ Update status; View $\rightarrow$ Display details)
+    \item End
+\end{enumerate}
+
+\subsubsection{Package Diagram}
+
+\textbf{1.\ Frontend Package} --- \texttt{app/} (pages and routes: landing page, patients/[userId]/register, patients/[userId]/new-appointment, admin), \texttt{components/} (forms, ui, table)
+
+\textbf{2.\ Business Logic Package} --- \texttt{lib/actions/} (patient.actions.ts, appointment.actions.ts), \texttt{lib/validation.ts}, \texttt{lib/utils.ts}
+
+\textbf{3.\ Data Access Package} --- \texttt{lib/appwrite.config.ts}, \texttt{types/appwrite.types.ts}
+
+\textbf{4.\ Configuration Package} --- \texttt{constants/index.ts}, \texttt{.env.local}
+
+\textbf{Dependencies:} Frontend $\rightarrow$ Business Logic $\rightarrow$ Data Access; All packages $\rightarrow$ Configuration
+
+\subsubsection{Deployment Diagram}
+
+\textbf{Nodes:}
+\begin{enumerate}
+    \item \textbf{Client Device} --- Web Browser (Chrome/Firefox/Safari), Protocol: HTTPS:443
+    \item \textbf{Vercel Edge Network} --- Next.js Application Server, Static Assets (CSS, JS, Images)
+    \item \textbf{Appwrite Cloud Server} --- Authentication, Database (MariaDB), Storage Services; Endpoint: cloud.appwrite.io/v1
+    \item \textbf{Twilio SMS Gateway} --- Messaging API, HTTPS REST API
+    \item \textbf{Sentry Monitoring} --- Error Tracking, Performance Monitoring
+    \item \textbf{Mobile Network} --- SMS Delivery via SMS Protocol
+\end{enumerate}
+
+\textbf{Communication Paths:} Client $\leftrightarrow$ Vercel (HTTPS TLS 1.3), Vercel $\leftrightarrow$ Appwrite (HTTPS REST), Vercel $\leftrightarrow$ Twilio (HTTPS REST), Vercel $\rightarrow$ Sentry (HTTPS one-way), Twilio $\rightarrow$ Mobile Network (SMS)
+
+\subsection{Data Flow Diagrams (DFD)}
+
+\subsubsection{DFD Level 0 (Context Diagram)}
+
+\textbf{External Entities:} Patient, Healthcare Administrator, System Administrator
+
+\textbf{Process:} Healthcare Patient Management System (single process bubble)
+
+\textbf{Data Flows:}
+\begin{enumerate}
+    \item Patient $\rightarrow$ System: Registration Data, Appointment Request
+    \item System $\rightarrow$ Patient: Appointment Confirmation, SMS Notification
+    \item Administrator $\rightarrow$ System: Login Credentials, Appointment Actions
+    \item System $\rightarrow$ Administrator: Appointment List, Statistics
+    \item System Admin $\rightarrow$ System: Configuration, Maintenance
+    \item System $\rightarrow$ System Admin: System Logs, Errors
+\end{enumerate}
+
+\subsubsection{DFD Level 1}
+
+\textbf{Processes:} P1: Manage Patient Registration, P2: Manage Appointments, P3: Admin Authentication, P4: Send Notifications, P5: Manage Documents
+
+\textbf{Data Stores:} D1: Users, D2: Patients, D3: Appointments, D4: Documents
+
+\textbf{Key Data Flows:}
+\begin{itemize}
+    \item Patient $\rightarrow$ P1: User Info $\rightarrow$ D1/D2: Store User/Patient
+    \item Patient $\rightarrow$ P2: Appointment Request $\rightarrow$ D3: Create Appointment
+    \item Admin $\rightarrow$ P3: Passkey $\rightarrow$ Validate and Grant Access
+    \item Admin $\rightarrow$ P2: Schedule/Cancel $\rightarrow$ D3: Update Status
+    \item P2 $\rightarrow$ P4: Trigger Notification $\rightarrow$ Patient: SMS
+    \item Patient $\rightarrow$ P5: Upload Document $\rightarrow$ D4: Store Document
+\end{itemize}
+
+\subsubsection{DFD Level 2 (P2: Manage Appointments)}
+
+\textbf{Sub-processes:}
+\begin{itemize}
+    \item \textbf{P2.1 Create Appointment:} Input: Patient ID, Doctor, Schedule, Reason $\rightarrow$ Output: Appointment ID (status: pending)
+    \item \textbf{P2.2 Schedule Appointment:} Update status to ``scheduled'' $\rightarrow$ Trigger P4 (Send SMS)
+    \item \textbf{P2.3 Cancel Appointment:} Update status to ``cancelled'' $\rightarrow$ Store cancellation reason
+    \item \textbf{P2.4 Get Appointment List:} Query D3 with filter criteria $\rightarrow$ Return formatted list
+\end{itemize}
+
+\subsection{Data Dictionary}
+
+\subsubsection{Users Table}
+
+\begin{longtable}{|p{3cm}|p{2.5cm}|p{1.5cm}|p{6cm}|}
+\hline
+\textbf{Field Name} & \textbf{Data Type} & \textbf{Length} & \textbf{Description} \\
+\hline
+\$id & String & 36 & Unique user identifier (UUID) \\
+name & String & 100 & Full name of user \\
+email & String & 255 & Email address (unique) \\
+phone & String & 20 & Phone number in E.164 format \\
+\$createdAt & DateTime & -- & Account creation timestamp \\
+\$updatedAt & DateTime & -- & Last update timestamp \\
+\hline
+\end{longtable}
+
+\subsubsection{Patients Collection}
+
+\begin{longtable}{|p{3.5cm}|p{2cm}|p{1.5cm}|p{6cm}|}
+\hline
+\textbf{Field Name} & \textbf{Data Type} & \textbf{Length} & \textbf{Description} \\
+\hline
+\$id & String & 36 & Unique patient record ID \\
+userId & String & 36 & Foreign key to Users table \\
+name & String & 100 & Patient full name \\
+email & String & 255 & Patient email \\
+phone & String & 20 & Patient phone number \\
+birthDate & Date & -- & Date of birth \\
+gender & Enum & -- & Male $|$ Female $|$ Other \\
+address & String & 500 & Residential address \\
+occupation & String & 100 & Current occupation \\
+emergencyContactName & String & 100 & Emergency contact name \\
+emergencyContactNumber & String & 20 & Emergency contact phone \\
+primaryPhysician & String & 100 & Preferred doctor name \\
+insuranceProvider & String & 100 & Insurance company name \\
+insurancePolicyNumber & String & 50 & Policy number \\
+allergies & String & 1000 & Known allergies (optional) \\
+currentMedication & String & 1000 & Current medications (optional) \\
+familyMedicalHistory & String & 1000 & Family medical history (optional) \\
+pastMedicalHistory & String & 1000 & Past medical history (optional) \\
+identificationType & String & 50 & Type of ID document (optional) \\
+identificationNumber & String & 50 & ID document number (optional) \\
+identificationDocument & String & 255 & File ID in storage (optional) \\
+privacyConsent & Boolean & 1 & Privacy agreement flag \\
+\hline
+\end{longtable}
+
+\subsubsection{Appointments Collection}
+
+\begin{longtable}{|p{3.5cm}|p{2cm}|p{1.5cm}|p{6cm}|}
+\hline
+\textbf{Field Name} & \textbf{Data Type} & \textbf{Length} & \textbf{Description} \\
+\hline
+\$id & String & 36 & Unique appointment ID \\
+userId & String & 36 & Foreign key to Users table \\
+patient & String & 36 & Foreign key to Patients collection \\
+primaryPhysician & String & 100 & Assigned doctor name \\
+schedule & DateTime & -- & Appointment date and time \\
+status & Enum & -- & pending $|$ scheduled $|$ cancelled \\
+reason & String & 500 & Appointment reason \\
+note & String & 1000 & Additional notes (optional) \\
+cancellationReason & String & 500 & Cancellation reason (optional) \\
+\$createdAt & DateTime & -- & Appointment creation time \\
+\hline
+\end{longtable}
+
+\subsection{Entity Relationship (ER) Diagram}
+
+\subsubsection{Entities and Attributes}
+
+\textbf{1.\ USER:} \underline{\$id} (PK), name, email (Unique), phone (Unique), \$createdAt, \$updatedAt
+
+\textbf{2.\ PATIENT:} \underline{\$id} (PK), userId (FK $\rightarrow$ USER), name, email, phone, birthDate, gender, address, occupation, emergencyContactName, emergencyContactNumber, primaryPhysician (FK $\rightarrow$ DOCTOR), insuranceProvider, insurancePolicyNumber, allergies, currentMedication, familyMedicalHistory, pastMedicalHistory, identificationType, identificationNumber, identificationDocumentId (FK $\rightarrow$ DOCUMENT), privacyConsent
+
+\textbf{3.\ APPOINTMENT:} \underline{\$id} (PK), userId (FK $\rightarrow$ USER), patientId (FK $\rightarrow$ PATIENT), primaryPhysician (FK $\rightarrow$ DOCTOR), schedule, status, reason, note, cancellationReason
+
+\textbf{4.\ DOCTOR:} \underline{name} (PK), image, specialty
+
+\textbf{5.\ DOCUMENT:} \underline{\$id} (PK), fileName, mimeType, size, \$createdAt
+
+\subsubsection{Relationships}
+
+\begin{enumerate}
+    \item \textbf{USER $\leftrightarrow$ PATIENT} (1:1) --- FK: PATIENT.userId references USER.\$id, Delete Rule: CASCADE
+    \item \textbf{USER $\leftrightarrow$ APPOINTMENT} (1:N) --- FK: APPOINTMENT.userId references USER.\$id, Delete Rule: CASCADE
+    \item \textbf{PATIENT $\leftrightarrow$ APPOINTMENT} (1:N) --- FK: APPOINTMENT.patientId references PATIENT.\$id, Delete Rule: RESTRICT
+    \item \textbf{DOCTOR $\leftrightarrow$ PATIENT} (1:N) --- FK: PATIENT.primaryPhysician references DOCTOR.name, Delete Rule: SET NULL
+    \item \textbf{DOCTOR $\leftrightarrow$ APPOINTMENT} (1:N) --- FK: APPOINTMENT.primaryPhysician references DOCTOR.name, Delete Rule: RESTRICT
+    \item \textbf{PATIENT $\leftrightarrow$ DOCUMENT} (1:1) --- Optional, FK: PATIENT.identificationDocumentId references DOCUMENT.\$id
+\end{enumerate}
+
+% ==================== PART C: IMPLEMENTATION ====================
+\newpage
+\section{Implementation (Coding)}
+
+This section presents the core implementation details of the Healthcare Patient Management System, highlighting key code modules, design patterns, and architectural decisions.
+
+\subsection{Project Structure}
+
+The project follows the Next.js 14 App Router convention with a clean separation of concerns:
+
+\begin{lstlisting}[language=bash, caption={Project Directory Structure}]
+healthcare/
+|-- app/                    # Next.js App Router pages
+|   |-- page.tsx            # Landing page
+|   |-- layout.tsx          # Root layout
+|   |-- admin/page.tsx      # Admin dashboard
+|   |-- patients/[userId]/  # Dynamic patient routes
+|       |-- register/       # Registration page
+|       |-- new-appointment/# Appointment booking
+|-- components/             # Reusable React components
+|   |-- forms/              # Form components
+|   |-- table/              # Data table components
+|   |-- ui/                 # ShadCN UI primitives
+|-- lib/                    # Business logic layer
+|   |-- actions/            # Server actions (CRUD)
+|   |-- validation.ts       # Zod schemas
+|   |-- utils.ts            # Utility functions
+|   |-- appwrite.config.ts  # Backend configuration
+|-- types/                  # TypeScript type definitions
+|-- constants/              # Application constants
+\end{lstlisting}
+
+\subsection{Backend Configuration --- Appwrite Setup}
+
+The Appwrite BaaS client is configured in a centralized module that initializes all required services:
+
+\begin{lstlisting}[language=Java, caption={Appwrite Client Configuration (appwrite.config.ts)}]
+import * as sdk from "node-appwrite";
+
+export const {
+  NEXT_PUBLIC_ENDPOINT: ENDPOINT,
+  PROJECT_ID, API_KEY, DATABASE_ID,
+  PATIENT_COLLECTION_ID, APPOINTMENT_COLLECTION_ID,
+  NEXT_PUBLIC_BUCKET_ID: BUCKET_ID,
+} = process.env;
+
+const client = new sdk.Client();
+client.setEndpoint(ENDPOINT!)
+  .setProject(PROJECT_ID!)
+  .setKey(API_KEY!);
+
+export const databases = new sdk.Databases(client);
+export const users = new sdk.Users(client);
+export const messaging = new sdk.Messaging(client);
+export const storage = new sdk.Storage(client);
+\end{lstlisting}
+
+\subsection{Form Validation --- Zod Schema Implementation}
+
+All forms use Zod for declarative, type-safe validation. The validation schemas enforce business rules at the form level before data reaches the server:
+
+\begin{lstlisting}[language=Java, caption={Patient Registration Validation Schema}]
+export const PatientFormValidation = z.object({
+  name: z.string()
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be at most 50 characters"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().refine(
+    (phone) => /^\+\d{10,15}$/.test(phone),
+    "Invalid phone number"
+  ),
+  birthDate: z.coerce.date(),
+  gender: z.enum(["Male", "Female", "Other"]),
+  address: z.string().min(5).max(500),
+  treatmentConsent: z.boolean().default(false)
+    .refine((v) => v === true, {
+      message: "You must consent to treatment"
+    }),
+  // ... additional fields
+});
+\end{lstlisting}
+
+\subsection{Server Actions --- Patient Management}
+
+Next.js Server Actions provide a secure, server-side execution environment for database operations:
+
+\begin{lstlisting}[language=Java, caption={User Creation Server Action (patient.actions.ts)}]
+"use server";
+import { ID, Query } from "node-appwrite";
+
+export const createUser = async (user: CreateUserParams) => {
+  try {
+    const newuser = await users.create(
+      ID.unique(), user.email,
+      user.phone, undefined, user.name
+    );
+    return parseStringify(newuser);
+  } catch (error: any) {
+    if (error && error?.code === 409) {
+      const existingUser = await users.list([
+        Query.equal("email", [user.email]),
+      ]);
+      return existingUser.users[0];
+    }
+    console.error("Error creating user:", error);
+  }
+};
+\end{lstlisting}
+
+\subsection{Server Actions --- Appointment Management}
+
+The appointment module handles the complete lifecycle including creation, scheduling, cancellation, and SMS notification:
+
+\begin{lstlisting}[language=Java, caption={Appointment Update with SMS Notification}]
+export const updateAppointment = async ({
+  appointmentId, userId, timeZone,
+  appointment, type,
+}: UpdateAppointmentParams) => {
+  try {
+    const updatedAppointment =
+      await databases.updateDocument(
+        DATABASE_ID!, APPOINTMENT_COLLECTION_ID!,
+        appointmentId, appointment
+      );
+    if (!updatedAppointment) throw Error;
+
+    const smsMessage = `Greetings from CarePulse.
+      ${type === "schedule"
+        ? `Your appointment is confirmed for
+           ${formatDateTime(appointment.schedule!,
+             timeZone).dateTime} with
+           Dr. ${appointment.primaryPhysician}`
+        : `Your appointment is cancelled.
+           Reason: ${appointment.cancellationReason}`
+      }.`;
+    await sendSMSNotification(userId, smsMessage);
+    revalidatePath("/admin");
+    return parseStringify(updatedAppointment);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+\end{lstlisting}
+
+\subsection{Admin Dashboard --- Statistics and Data Table}
+
+The admin page uses Next.js server-side rendering to fetch and display appointment statistics in real-time:
+
+\begin{lstlisting}[language=Java, caption={Admin Dashboard with Statistical Aggregation}]
+const AdminPage = async () => {
+  const appointments =
+    await getRecentAppointmentList();
+  return (
+    <main className="admin-main">
+      <section className="admin-stat">
+        <StatCard type="appointments"
+          count={appointments.scheduledCount}
+          label="Scheduled appointments"
+          icon="/assets/icons/appointments.svg" />
+        <StatCard type="pending"
+          count={appointments.pendingCount}
+          label="Pending appointments"
+          icon="/assets/icons/pending.svg" />
+        <StatCard type="cancelled"
+          count={appointments.cancelledCount}
+          label="Cancelled appointments"
+          icon="/assets/icons/cancelled.svg" />
+      </section>
+      <DataTable columns={columns}
+        data={appointments.documents} />
+    </main>
+  );
+};
+\end{lstlisting}
+
+\subsection{Security --- Passkey Authentication}
+
+Admin access is protected by a 6-digit OTP passkey with Base64 encryption for localStorage persistence:
+
+\begin{lstlisting}[language=Java, caption={Passkey Validation and Encryption}]
+const validatePasskey = (e) => {
+  e.preventDefault();
+  if (passkey ===
+      process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
+    const encryptedKey = encryptKey(passkey);
+    localStorage.setItem("accessKey",
+      encryptedKey);
+    setOpen(false);
+  } else {
+    setError("Invalid passkey. Please try again.");
+  }
+};
+
+// Utility functions (utils.ts)
+export function encryptKey(passkey: string) {
+  return btoa(passkey);
+}
+export function decryptKey(passkey: string) {
+  return atob(passkey);
+}
+\end{lstlisting}
+
+\subsection{Reusable Component Architecture --- CustomFormField}
+
+A polymorphic \texttt{CustomFormField} component renders seven different field types (INPUT, TEXTAREA, PHONE\_INPUT, CHECKBOX, DATE\_PICKER, SELECT, SKELETON) using a single unified interface, promoting maximum code reuse across all forms:
+
+\begin{lstlisting}[language=Java, caption={Polymorphic Form Field Component}]
+export enum FormFieldType {
+  INPUT = "input",      TEXTAREA = "textarea",
+  PHONE_INPUT = "phoneInput",
+  CHECKBOX = "checkbox",
+  DATE_PICKER = "datePicker",
+  SELECT = "select",    SKELETON = "skeleton",
+}
+
+const RenderInput = ({ field, props }) => {
+  switch (props.fieldType) {
+    case FormFieldType.INPUT:
+      return (
+        <div className="flex rounded-md border">
+          {props.iconSrc && <Image ... />}
+          <FormControl>
+            <Input placeholder={props.placeholder}
+              {...field} className="shad-input" />
+          </FormControl>
+        </div>
+      );
+    case FormFieldType.DATE_PICKER:
+      return (
+        <ReactDatePicker
+          showTimeSelect={props.showTimeSelect}
+          selected={field.value}
+          onChange={(date) => field.onChange(date)}
+          dateFormat={props.dateFormat} />
+      );
+    // ... other field types
+  }
+};
+\end{lstlisting}
+
+% ==================== PART D: TESTING ====================
+\newpage
+\section{Testing}
+
+\subsection{Test Strategy Overview}
+
+The testing strategy for CarePulse follows a multi-layered approach ensuring quality at every level of the application stack. Each system module is mapped to specific test types to guarantee comprehensive coverage.
+
+\begin{table}[H]
+\centering
+\caption{Test Strategy by Level}
+\begin{tabular}{|p{3cm}|p{10cm}|}
+\hline
+\textbf{Testing Level} & \textbf{Scope \& Approach} \\
+\hline
+Unit Testing & Individual functions: \texttt{createUser}, \texttt{registerPatient}, \texttt{createAppointment}, \texttt{updateAppointment}, Zod validation schemas. Mocked Appwrite SDK calls. \\
+\hline
+Integration Testing & End-to-end server action flows: form submission $\rightarrow$ server action $\rightarrow$ Appwrite DB write $\rightarrow$ response. Passkey verification flow. \\
+\hline
+System Testing & Full user journeys through the browser: registration $\rightarrow$ appointment booking $\rightarrow$ admin management $\rightarrow$ SMS notification. \\
+\hline
+User/UAT Testing & Stakeholder validation of UI/UX, accessibility, responsive design, and real-world patient workflow correctness. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Test Cases --- Patient Registration Module (M1)}
+
+\begin{longtable}{|p{1cm}|p{3.2cm}|p{4.2cm}|p{2.2cm}|p{1.5cm}|}
+\hline
+\textbf{TC} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\hline
+TC-01 & Register with valid name, email, phone & User created; redirected to registration page & System & M1 \\
+\hline
+TC-02 & Submit with name $<$ 2 chars & Validation error: ``Name must be at least 2 characters'' & Unit & M1 \\
+\hline
+TC-03 & Submit with invalid email format & Validation error: ``Invalid email address'' & Unit & M1 \\
+\hline
+TC-04 & Submit with invalid phone (missing + prefix) & Validation error: ``Invalid phone number'' & Unit & M1 \\
+\hline
+TC-05 & Register duplicate email & System returns existing user (HTTP 409 handled) & Integration & M1 \\
+\hline
+TC-06 & Complete full registration with ID upload & Patient document created; file stored in Appwrite & System & M1 \\
+\hline
+TC-07 & Submit without required consents & Validation error: ``You must consent\ldots'' & Unit & M1 \\
+\hline
+\end{longtable}
+
+\subsection{Test Cases --- Appointment Management Module (M2)}
+
+\begin{longtable}{|p{1cm}|p{3.2cm}|p{4.2cm}|p{2.2cm}|p{1.5cm}|}
+\hline
+\textbf{TC} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\hline
+TC-08 & Create appointment with valid data & Appointment saved as ``pending''; admin page revalidated & System & M2 \\
+\hline
+TC-09 & Create with reason $<$ 2 chars & Validation error: ``Reason must be at least 2 characters'' & Unit & M2 \\
+\hline
+TC-10 & Schedule pending appointment & Status $\rightarrow$ ``scheduled''; SMS confirmation sent & System & M2, M4 \\
+\hline
+TC-11 & Cancel without reason & Validation error: reason required (min 2 chars) & Unit & M2 \\
+\hline
+TC-12 & Cancel with valid reason & Status $\rightarrow$ ``cancelled''; SMS notice sent & System & M2, M4 \\
+\hline
+TC-13 & Retrieve recent appointments & Returns list ordered by \texttt{\$createdAt} desc with correct counts & Integration & M2 \\
+\hline
+\end{longtable}
+
+\subsection{Test Cases --- Admin Dashboard Module (M3)}
+
+\begin{longtable}{|p{1cm}|p{3.2cm}|p{4.2cm}|p{2.2cm}|p{1.5cm}|}
+\hline
+\textbf{TC} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\hline
+TC-14 & Access admin with correct passkey & Dashboard rendered with stat cards and data table & System & M3 \\
+\hline
+TC-15 & Access admin with wrong passkey & Access denied; OTP modal shows error & System & M3 \\
+\hline
+TC-16 & StatCard count accuracy & Scheduled, pending, cancelled counts match DB & Integration & M3 \\
+\hline
+TC-17 & DataTable column rendering & Patient name, date, status, doctor, actions visible & User & M3 \\
+\hline
+\end{longtable}
+
+\subsection{Test Cases --- Notification \& Backend Module (M4)}
+
+\begin{longtable}{|p{1cm}|p{3.2cm}|p{4.2cm}|p{2.2cm}|p{1.5cm}|}
+\hline
+\textbf{TC} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\hline
+TC-18 & SMS on scheduling & SMS contains date/time, doctor name, confirmation & Integration & M4 \\
+\hline
+TC-19 & SMS on cancellation & SMS contains cancellation reason and schedule & Integration & M4 \\
+\hline
+TC-20 & File upload for ID document & File in Appwrite Storage; URL linked to patient & Integration & M4 \\
+\hline
+TC-21 & Appwrite DB connection failure & Server action logs error; UI shows graceful fallback & System & M4 \\
+\hline
+\end{longtable}
+
+\subsection{Requirements Traceability Matrix}
+
+\begin{table}[H]
+\centering
+\caption{Traceability Matrix --- Modules to Test Cases to Source Files}
+\begin{tabular}{|l|l|p{6.5cm}|}
+\hline
+\textbf{Module} & \textbf{Test Cases} & \textbf{Key Source Files} \\
+\hline
+M1 -- Patient Registration & TC-01 to TC-07 & \texttt{PatientForm.tsx}, \texttt{RegisterForm.tsx}, \texttt{patient.actions.ts}, \texttt{validation.ts} \\
+\hline
+M2 -- Appointment Mgmt & TC-08 to TC-13 & \texttt{AppointmentForm.tsx}, \texttt{appointment.actions.ts}, \texttt{validation.ts} \\
+\hline
+M3 -- Admin Dashboard & TC-14 to TC-17 & \texttt{admin/page.tsx}, \texttt{PasskeyModal.tsx}, \texttt{StatCard.tsx}, \texttt{DataTable.tsx} \\
+\hline
+M4 -- Notification/Backend & TC-18 to TC-21 & \texttt{appointment.actions.ts}, \texttt{patient.actions.ts}, \texttt{appwrite.config.ts} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{System Testing Plan}
+
+System testing validates complete end-to-end workflows across all integrated modules:
+
+\begin{enumerate}
+    \item \textbf{Workflow 1 --- Patient Onboarding:} Open landing page $\rightarrow$ fill PatientForm $\rightarrow$ submit $\rightarrow$ verify user creation $\rightarrow$ complete RegisterForm with all medical details and ID upload $\rightarrow$ verify patient document in Appwrite.
+    \item \textbf{Workflow 2 --- Appointment Lifecycle:} Logged-in patient $\rightarrow$ create appointment $\rightarrow$ verify pending status $\rightarrow$ admin schedules $\rightarrow$ verify SMS received $\rightarrow$ admin cancels $\rightarrow$ verify cancellation SMS.
+    \item \textbf{Workflow 3 --- Admin Operations:} Navigate to /admin $\rightarrow$ enter passkey via OTP modal $\rightarrow$ verify stat cards $\rightarrow$ sort/filter appointments $\rightarrow$ schedule and cancel from data table.
+\end{enumerate}
+
+\textbf{Environment:} Staging Appwrite instance with seeded test data. Browser testing on Chrome, Firefox, Safari (desktop \& mobile viewports).
+
+\subsection{User Acceptance Testing (UAT)}
+
+\begin{table}[H]
+\centering
+\caption{UAT Acceptance Criteria}
+\begin{tabular}{|p{3.2cm}|p{10cm}|}
+\hline
+\textbf{UAT Criterion} & \textbf{Evaluation} \\
+\hline
+Usability & Forms are intuitive; error messages are clear and contextual; loading states provide user feedback. \\
+\hline
+Responsiveness & Layout adapts correctly on mobile (375px), tablet (768px), and desktop (1440px). \\
+\hline
+Accessibility & All form fields have labels; keyboard navigation works; color contrast meets WCAG AA. \\
+\hline
+Data Integrity & All data persists correctly in Appwrite; no data truncation beyond expected 32-char limits. \\
+\hline
+Notification Accuracy & SMS messages contain correct appointment details, physician names, and timezone-formatted date/time. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Test Tools \& Environment}
+
+\begin{itemize}
+    \item \textbf{Unit/Integration:} Jest + React Testing Library (component tests), Zod schema unit tests
+    \item \textbf{E2E / System:} Cypress or Playwright for browser-based workflow tests
+    \item \textbf{API Testing:} Postman/Insomnia for Appwrite REST API validation
+    \item \textbf{CI/CD:} GitHub Actions pipeline running lint, type-check, unit tests, and E2E tests on PRs
+\end{itemize}
+
+% ==================== CONCLUSION ====================
+\newpage
+\section{Conclusion}
+
+The Healthcare Patient Management System successfully addresses the core requirements of modern healthcare facilities by providing:
+
+\begin{itemize}
+    \item Streamlined patient registration and profile management
+    \item Efficient appointment scheduling with doctor selection
+    \item Comprehensive admin dashboard for appointment oversight
+    \item Automated SMS notifications for improved communication
+    \item Secure document storage and management
+    \item Real-time error tracking and performance monitoring via Sentry
+\end{itemize}
+
+The system architecture leverages modern technologies (Next.js 14, TypeScript, Appwrite, Twilio) to ensure scalability, maintainability, and excellent user experience. The modular design allows for future enhancements such as:
+
+\begin{itemize}
+    \item Telemedicine video consultations
+    \item Electronic health records (EHR) integration
+    \item Prescription management
+    \item Billing and payment processing
+    \item Multi-language support
+    \item Mobile application development (React Native)
+\end{itemize}
+
+The agile development approach ensures continuous improvement based on user feedback and evolving healthcare regulations. With comprehensive testing across unit, integration, system, and UAT levels, the system demonstrates reliability and readiness for production deployment.
+
+% ==================== REFERENCES ====================
+\newpage
+\section{References}
+
+\begin{enumerate}
+    \item Next.js Documentation. (2024). \textit{Next.js 14 --- The React Framework}. \url{https://nextjs.org/docs}
+    \item Appwrite. (2024). \textit{Appwrite --- Open-Source Backend Server}. \url{https://appwrite.io/docs}
+    \item Twilio. (2024). \textit{Twilio SMS API Documentation}. \url{https://www.twilio.com/docs/sms}
+    \item Microsoft. (2024). \textit{TypeScript Documentation}. \url{https://www.typescriptlang.org/docs}
+    \item TailwindCSS. (2024). \textit{Tailwind CSS Framework Documentation}. \url{https://tailwindcss.com/docs}
+    \item ShadCN UI. (2024). \textit{Beautifully designed components}. \url{https://ui.shadcn.com}
+    \item Sentry. (2024). \textit{Application Monitoring and Error Tracking}. \url{https://docs.sentry.io}
+    \item React Hook Form. (2024). \textit{Performant, flexible and extensible forms}. \url{https://react-hook-form.com}
+    \item Zod. (2024). \textit{TypeScript-first schema validation}. \url{https://zod.dev}
+    \item Pressman, R.\,S., \& Maxim, B.\,R. (2020). \textit{Software Engineering: A Practitioner's Approach} (9th ed.). McGraw-Hill Education.
+    \item Sommerville, I. (2016). \textit{Software Engineering} (10th ed.). Pearson.
+    \item Dennis, A., Wixom, B.\,H., \& Roth, R.\,M. (2018). \textit{Systems Analysis and Design} (7th ed.). Wiley.
+\end{enumerate}
+
+% ==================== APPENDICES ====================
+\newpage
+\appendix
+\section{Appendix A: Environment Variables Configuration}
+
+\begin{verbatim}
+# APPWRITE Configuration
+NEXT_PUBLIC_ENDPOINT=https://cloud.appwrite.io/v1
+PROJECT_ID=your_project_id
+API_KEY=your_api_key
+DATABASE_ID=your_database_id
+PATIENT_COLLECTION_ID=patient_collection
+APPOINTMENT_COLLECTION_ID=appointment_collection
+NEXT_PUBLIC_BUCKET_ID=your_bucket_id
+
+# Admin Configuration
+NEXT_PUBLIC_ADMIN_PASSKEY=111111
+
+# Sentry Configuration
+SENTRY_DSN=your_sentry_dsn
+\end{verbatim}
+
+\section{Appendix B: Installation Instructions}
+
+\begin{enumerate}
+    \item Clone the repository:
+    \begin{verbatim}
+    git clone https://github.com/yourusername/healthcare.git
+    cd healthcare
+    \end{verbatim}
+    \item Install dependencies:
+    \begin{verbatim}
+    npm install
+    \end{verbatim}
+    \item Configure environment variables (see Appendix A)
+    \item Run development server:
+    \begin{verbatim}
+    npm run dev
+    \end{verbatim}
+    \item Access application at \url{http://localhost:3000}
+\end{enumerate}
+
+\section{Appendix C: Database Schema (Conceptual SQL)}
+
+\begin{lstlisting}[language=SQL, caption={Conceptual SQL Schema}]
+-- Users Table (managed by Appwrite Auth)
+CREATE TABLE users (
+    id VARCHAR(36) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Patients Collection
+CREATE TABLE patients (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    birth_date DATE NOT NULL,
+    gender ENUM('Male','Female','Other') NOT NULL,
+    address VARCHAR(500) NOT NULL,
+    occupation VARCHAR(100) NOT NULL,
+    emergency_contact_name VARCHAR(100) NOT NULL,
+    emergency_contact_number VARCHAR(20) NOT NULL,
+    primary_physician VARCHAR(100) NOT NULL,
+    insurance_provider VARCHAR(100) NOT NULL,
+    insurance_policy_number VARCHAR(50) NOT NULL,
+    allergies TEXT,
+    current_medication TEXT,
+    family_medical_history TEXT,
+    past_medical_history TEXT,
+    identification_type VARCHAR(50),
+    identification_number VARCHAR(50),
+    identification_document VARCHAR(255),
+    privacy_consent BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id)
+      REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Appointments Collection
+CREATE TABLE appointments (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    patient_id VARCHAR(36) NOT NULL,
+    primary_physician VARCHAR(100) NOT NULL,
+    schedule DATETIME NOT NULL,
+    status ENUM('pending','scheduled','cancelled')
+      DEFAULT 'pending',
+    reason VARCHAR(500) NOT NULL,
+    note TEXT,
+    cancellation_reason VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id)
+      REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id)
+      REFERENCES patients(id) ON DELETE RESTRICT
+);
+
+-- Performance Indexes
+CREATE INDEX idx_appt_status
+  ON appointments(status);
+CREATE INDEX idx_appt_schedule
+  ON appointments(schedule);
+CREATE INDEX idx_appt_patient
+  ON appointments(patient_id);
+\end{lstlisting}
+
+\end{document}

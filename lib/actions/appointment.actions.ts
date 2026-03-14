@@ -22,7 +22,14 @@ export const createAppointment = async (
       DATABASE_ID!,
       APPOINTMENT_COLLECTION_ID!,
       ID.unique(),
-      appointment
+      {
+        patient: appointment.patient,
+        schedule: appointment.schedule,
+        status: appointment.status,
+        primaryPhysician: appointment.primaryPhysician,
+        reason: appointment.reason,
+        note: appointment.note || null,
+      }
     );
 
     revalidatePath("/admin");

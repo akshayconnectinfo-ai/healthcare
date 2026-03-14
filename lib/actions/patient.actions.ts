@@ -80,11 +80,18 @@ export const registerPatient = async ({
       PATIENT_COLLECTION_ID!,
       ID.unique(),
       {
-        identificationDocumentId: file?.$id ? file.$id : null,
-        identificationDocumentUrl: file?.$id
-          ? `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file.$id}/view??project=${PROJECT_ID}`
-          : null,
-        ...patient,
+        userId: patient.userId,
+        name: patient.name?.substring(0, 32),
+        email: patient.email?.substring(0, 32),
+        phone: patient.phone?.substring(0, 32),
+        gender: patient.gender?.substring(0, 32),
+        address: patient.address?.substring(0, 32),
+        occupation: patient.occupation?.substring(0, 32) || null,
+        emergencyContactName: patient.emergencyContactName?.substring(0, 32),
+        emergencyContactNumber: patient.emergencyContactNumber?.substring(0, 32),
+        primaryPhysician: patient.primaryPhysician?.substring(0, 32),
+        insuranceProvider: patient.insuranceProvider?.substring(0, 32) || null,
+        insurancePolicyNumber: patient.insurancePolicyNumber?.substring(0, 32),
       }
     );
 

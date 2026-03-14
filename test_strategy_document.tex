@@ -1,0 +1,230 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+
+\definecolor{headerblue}{RGB}{0,70,130}
+\hypersetup{colorlinks=true, linkcolor=headerblue, urlcolor=headerblue}
+
+\titleformat{\section}{\large\bfseries\color{headerblue}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{headerblue}}{}{0em}{}
+\titlespacing*{\section}{0pt}{10pt}{6pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small CarePulse Healthcare System}
+\lhead{\small Test Strategy \& Test Cases}
+\rfoot{\small Page \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\begin{document}
+
+% ===================== TITLE PAGE (compact) =====================
+\begin{center}
+    {\LARGE \textbf{\color{headerblue}CarePulse Healthcare Management System}}\\[6pt]
+    {\Large Test Strategy \& Test Cases Document}\\[12pt]
+    \begin{tabular}{ll}
+        \textbf{Project:}  & CarePulse -- Patient Appointment Management System \\
+        \textbf{Version:}  & 1.0 \\
+        \textbf{Date:}     & March 11, 2026 \\
+        \textbf{Stack:}    & Next.js, TypeScript, Appwrite (BaaS), Zod, Twilio SMS \\
+    \end{tabular}
+\end{center}
+\vspace{6pt}
+\hrule
+\vspace{8pt}
+
+% ===================== 1. INTRODUCTION =====================
+\section{1. Introduction}
+
+CarePulse is a full-stack healthcare appointment management system built with \textbf{Next.js 14} (App Router), \textbf{TypeScript}, and \textbf{Appwrite} as the backend-as-a-service. The system enables patients to register, book appointments with physicians, and receive SMS notifications. An admin dashboard provides oversight of all appointments with schedule/cancel capabilities.
+
+\subsection{1.1 System Modules Under Test}
+\begin{enumerate}[leftmargin=*, noitemsep]
+    \item \textbf{M1 -- Patient Registration Module:} User creation (\texttt{PatientForm}), detailed patient registration (\texttt{RegisterForm}), identification document upload, Zod schema validation.
+    \item \textbf{M2 -- Appointment Management Module:} Appointment creation, scheduling, cancellation (\texttt{AppointmentForm}), physician selection, date/time scheduling.
+    \item \textbf{M3 -- Admin Dashboard Module:} Passkey-protected admin access (\texttt{PasskeyModal}), statistical overview cards (\texttt{StatCard}), data table with appointment listing (\texttt{DataTable}).
+    \item \textbf{M4 -- Notification \& Backend Module:} SMS notifications via Appwrite Messaging, Appwrite database CRUD operations, file storage for identification documents.
+\end{enumerate}
+
+\subsection{1.2 Test Strategy Overview}
+
+\begin{tabular}{@{}p{3cm}p{11cm}@{}}
+    \toprule
+    \textbf{Testing Level} & \textbf{Scope \& Approach} \\
+    \midrule
+    Unit Testing        & Individual functions: \texttt{createUser}, \texttt{registerPatient}, \texttt{createAppointment}, \texttt{updateAppointment}, Zod validation schemas. Mocked Appwrite SDK calls. \\
+    Integration Testing & End-to-end server action flows: form submission $\rightarrow$ server action $\rightarrow$ Appwrite DB write $\rightarrow$ response. Passkey verification flow. \\
+    System Testing      & Full user journeys through the browser: registration $\rightarrow$ appointment booking $\rightarrow$ admin management $\rightarrow$ SMS notification. \\
+    User/UAT Testing    & Stakeholder validation of UI/UX, accessibility, responsive design, and real-world patient workflow correctness. \\
+    \bottomrule
+\end{tabular}
+
+% ===================== 2. TEST CASES =====================
+\section{2. Test Cases with Traceability Matrix}
+
+Each test case is traced to its originating module (M1--M4) for full requirements traceability.
+
+\vspace{4pt}
+
+% ----------- 2.1 Patient Registration -----------
+\subsection{2.1 Patient Registration Module (M1)}
+
+\begin{longtable}{@{}p{1.2cm}p{3.5cm}p{4.5cm}p{2.5cm}p{1.5cm}@{}}
+\toprule
+\textbf{TC ID} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{TC ID} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\midrule
+\endhead
+
+TC-01 & Register with valid name, email, phone & User created in Appwrite; redirected to registration page & System & M1 \\
+\midrule
+TC-02 & Submit with name $<$ 2 chars & Validation error: ``Name must be at least 2 characters'' & Unit & M1 \\
+\midrule
+TC-03 & Submit with invalid email format & Validation error: ``Invalid email address'' displayed & Unit & M1 \\
+\midrule
+TC-04 & Submit with invalid phone (missing \texttt{+} prefix) & Validation error: ``Invalid phone number'' & Unit & M1 \\
+\midrule
+TC-05 & Register duplicate email & System returns existing user (HTTP 409 handled) & Integration & M1 \\
+\midrule
+TC-06 & Complete full patient registration with all fields and ID document upload & Patient document created in Appwrite DB; file stored in Appwrite Storage & System & M1 \\
+\midrule
+TC-07 & Submit registration without required consents (treatment, disclosure, privacy) & Validation error: ``You must consent to \ldots'' & Unit & M1 \\
+\bottomrule
+\end{longtable}
+
+% ----------- 2.2 Appointment Management -----------
+\subsection{2.2 Appointment Management Module (M2)}
+
+\begin{longtable}{@{}p{1.2cm}p{3.5cm}p{4.5cm}p{2.5cm}p{1.5cm}@{}}
+\toprule
+\textbf{TC ID} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\midrule
+\endfirsthead
+
+TC-08 & Create appointment with valid physician, date, and reason & Appointment saved with status ``pending''; admin page revalidated & System & M2 \\
+\midrule
+TC-09 & Create appointment with reason $<$ 2 chars & Validation error: ``Reason must be at least 2 characters'' & Unit & M2 \\
+\midrule
+TC-10 & Schedule a pending appointment from admin & Status updated to ``scheduled''; SMS confirmation sent to patient & System & M2, M4 \\
+\midrule
+TC-11 & Cancel appointment without cancellation reason & Validation error: reason is required (min 2 chars) & Unit & M2 \\
+\midrule
+TC-12 & Cancel appointment with valid reason & Status updated to ``cancelled''; SMS cancellation notice sent & System & M2, M4 \\
+\midrule
+TC-13 & Retrieve recent appointments & Returns list ordered by \texttt{\$createdAt} desc with correct scheduled/pending/cancelled counts & Integration & M2 \\
+\bottomrule
+\end{longtable}
+
+% ----------- 2.3 Admin Dashboard -----------
+\subsection{2.3 Admin Dashboard Module (M3)}
+
+\begin{longtable}{@{}p{1.2cm}p{3.5cm}p{4.5cm}p{2.5cm}p{1.5cm}@{}}
+\toprule
+\textbf{TC ID} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\midrule
+\endfirsthead
+
+TC-14 & Access admin page with correct passkey & Admin dashboard rendered with stat cards and data table & System & M3 \\
+\midrule
+TC-15 & Access admin page with incorrect passkey & Access denied; OTP modal shows error state & System & M3 \\
+\midrule
+TC-16 & Verify StatCard displays correct counts & Scheduled, pending, and cancelled counts match database & Integration & M3 \\
+\midrule
+TC-17 & Verify DataTable renders all appointment columns & Patient name, date, status, doctor, and actions visible & User & M3 \\
+\bottomrule
+\end{longtable}
+
+% ----------- 2.4 Notification & Backend -----------
+\subsection{2.4 Notification \& Backend Module (M4)}
+
+\begin{longtable}{@{}p{1.2cm}p{3.5cm}p{4.5cm}p{2.5cm}p{1.5cm}@{}}
+\toprule
+\textbf{TC ID} & \textbf{Test Case} & \textbf{Expected Result} & \textbf{Type} & \textbf{Module} \\
+\midrule
+\endfirsthead
+
+TC-18 & SMS sent on appointment scheduling & SMS contains correct date/time, doctor name, and confirmation text & Integration & M4 \\
+\midrule
+TC-19 & SMS sent on appointment cancellation & SMS contains cancellation reason and original schedule & Integration & M4 \\
+\midrule
+TC-20 & File upload for identification document & File stored in Appwrite Storage bucket; URL linked to patient record & Integration & M4 \\
+\midrule
+TC-21 & Appwrite DB connection failure handling & Server action logs error; UI shows graceful fallback & System & M4 \\
+\bottomrule
+\end{longtable}
+
+% ===================== 3. TRACEABILITY MATRIX =====================
+\section{3. Requirements Traceability Matrix}
+
+\begin{center}
+\begin{tabular}{@{}llp{7cm}@{}}
+\toprule
+\textbf{Module} & \textbf{Test Case IDs} & \textbf{Key Source Files} \\
+\midrule
+M1 -- Patient Registration & TC-01 to TC-07 & \texttt{PatientForm.tsx}, \texttt{RegisterForm.tsx}, \texttt{patient.actions.ts}, \texttt{validation.ts} \\
+\midrule
+M2 -- Appointment Mgmt & TC-08 to TC-13 & \texttt{AppointmentForm.tsx}, \texttt{appointment.actions.ts}, \texttt{validation.ts} \\
+\midrule
+M3 -- Admin Dashboard & TC-14 to TC-17 & \texttt{admin/page.tsx}, \texttt{PasskeyModal.tsx}, \texttt{StatCard.tsx}, \texttt{DataTable.tsx} \\
+\midrule
+M4 -- Notification/Backend & TC-18 to TC-21 & \texttt{appointment.actions.ts}, \texttt{patient.actions.ts}, \texttt{appwrite.config.ts} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ===================== 4. SYSTEM & USER TESTING PLAN =====================
+\section{4. System Testing \& User Testing Plan}
+
+\subsection{4.1 System Testing}
+
+System testing validates complete end-to-end workflows across all integrated modules:
+
+\begin{enumerate}[leftmargin=*, noitemsep]
+    \item \textbf{Workflow 1 -- Patient Onboarding:} Open landing page $\rightarrow$ fill \texttt{PatientForm} $\rightarrow$ submit $\rightarrow$ verify user creation $\rightarrow$ complete \texttt{RegisterForm} with all medical details and ID upload $\rightarrow$ verify patient document in Appwrite.
+    \item \textbf{Workflow 2 -- Appointment Lifecycle:} Logged-in patient $\rightarrow$ create appointment via \texttt{AppointmentForm} $\rightarrow$ verify pending status $\rightarrow$ admin schedules $\rightarrow$ verify SMS received $\rightarrow$ admin cancels $\rightarrow$ verify cancellation SMS.
+    \item \textbf{Workflow 3 -- Admin Operations:} Navigate to \texttt{/admin} $\rightarrow$ enter passkey via OTP modal $\rightarrow$ verify stat cards reflect real data $\rightarrow$ sort/filter appointments in DataTable $\rightarrow$ schedule and cancel appointments.
+\end{enumerate}
+
+\textbf{Environment:} Staging Appwrite instance with seeded test data. Browser testing on Chrome, Firefox, and Safari (desktop \& mobile viewports).
+
+\subsection{4.2 User Acceptance Testing (UAT)}
+
+\begin{tabular}{@{}p{3.5cm}p{10.5cm}@{}}
+\toprule
+\textbf{UAT Criterion} & \textbf{Evaluation} \\
+\midrule
+Usability & Forms are intuitive; error messages are clear and contextual; loading states (\texttt{SubmitButton}) provide feedback. \\
+Responsiveness & Layout adapts correctly on mobile (375px), tablet (768px), and desktop (1440px) breakpoints. \\
+Accessibility & All form fields have labels; keyboard navigation works for modals and forms; color contrast meets WCAG AA. \\
+Data Integrity & All patient and appointment data persists correctly in Appwrite; no data truncation beyond expected 32-char limits. \\
+Notification Accuracy & SMS messages contain correct appointment details, physician names, and formatted date/time for the user's timezone. \\
+\bottomrule
+\end{tabular}
+
+\vspace{6pt}
+
+\subsection{4.3 Test Tools \& Environment}
+\begin{itemize}[noitemsep, leftmargin=*]
+    \item \textbf{Unit/Integration:} Jest + React Testing Library (component tests), Zod schema unit tests
+    \item \textbf{E2E / System:} Cypress or Playwright for browser-based workflow tests
+    \item \textbf{API Testing:} Postman/Insomnia for Appwrite REST API validation
+    \item \textbf{CI/CD:} GitHub Actions pipeline running lint, type-check, unit tests, and E2E tests on pull requests
+\end{itemize}
+
+\end{document}
