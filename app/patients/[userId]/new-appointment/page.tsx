@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { AppointmentForm } from "@/components/forms/AppointmentForm";
 import { getPatient } from "@/lib/actions/patient.actions";
@@ -25,6 +26,13 @@ const Appointment = async ({ params: { userId } }: SearchParamProps) => {
             userId={userId}
             type="create"
           />
+
+          <Link
+            href={`/patients/${userId}/assigned-doctors`}
+            className="text-14-medium mt-4 text-green-500"
+          >
+            View Assigned Doctor
+          </Link>
 
           <p className="copyright mt-10 py-12">© 2026 CarePluse</p>
         </div>

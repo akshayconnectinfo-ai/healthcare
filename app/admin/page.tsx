@@ -33,6 +33,14 @@ const AdminPage = async () => {
           <p className="text-dark-700">
             Start the day with managing new appointments
           </p>
+          <div className="flex gap-4 text-14-medium">
+            <Link href="/admin/patient-doctor-assignments" className="text-green-500">
+              Patient-Doctor Assignments
+            </Link>
+            <Link href="/doctors" className="text-green-500">
+              Doctors Dashboard
+            </Link>
+          </div>
         </section>
 
         <section className="admin-stat">

@@ -29,9 +29,14 @@ const Home = ({ searchParams }: SearchParamProps) => {
             <p className="justify-items-end text-dark-600 xl:text-left">
               © 2026 CarePluse
             </p>
-            <Link href="/?admin=true" className="text-green-500">
-              Admin
-            </Link>
+            <div className="flex gap-5">
+              <Link href="/doctors" className="text-green-500">
+                Doctors
+              </Link>
+              <Link href="/?admin=true" className="text-green-500">
+                Admin
+              </Link>
+            </div>
           </div>
         </div>
       </section>
