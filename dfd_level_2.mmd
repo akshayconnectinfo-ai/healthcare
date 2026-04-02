@@ -1,0 +1,24 @@
+graph LR
+    Patient[Patient]
+    Admin[Admin]
+    P4((P4 Send SMS))
+    D3[(D3 Appointments)]
+
+    P2_1((2.1 Create Appt))
+    P2_2((2.2 Schedule))
+    P2_3((2.3 Cancel))
+    P2_4((2.4 Get List))
+
+    Patient -- Submit Details ---> P2_1
+    P2_1 -- Save Pending ---> D3
+
+    Admin -- Confirm Time ---> P2_2
+    P2_2 -- Update Scheduled ---> D3
+    P2_2 -- Trigger SMS ---> P4
+
+    Admin -- Provide Reason ---> P2_3
+    P2_3 -- Update Cancelled ---> D3
+
+    Admin -- Filter Criteria ---> P2_4
+    D3 -- Fetch Records ---> P2_4
+    P2_4 -- Formatted View ---> Admin

@@ -1,0 +1,15 @@
+graph LR
+    P[Patient]
+    HA[Admin]
+    SA[System Admin]
+    
+    SYS((0.0 Healthcare System))
+    
+    P -- Registration, Booking ---> SYS
+    SYS -- Confirmation, SMS ---> P
+    
+    HA -- Login, Actions ---> SYS
+    SYS -- Appt List, Stats ---> HA
+    
+    SA -- Config, Maint ---> SYS
+    SYS -- Logs, Errors ---> SA
